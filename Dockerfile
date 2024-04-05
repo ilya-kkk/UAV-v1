@@ -1,5 +1,6 @@
 FROM ubuntu:22.04 as base
-RUN sudo apt update && sudo apt install locales
+RUN sudo apt update 
+RUN sudo apt install locales
 RUN sudo locale-gen en_US en_US.UTF-8
 RUN sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 RUN export LANG=en_US.UTF-8
