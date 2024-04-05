@@ -13,3 +13,5 @@ RUN sudo apt update && sudo apt upgrade
 RUN sudo apt install ros-iron-desktop
 RUN source /opt/ros/iron/setup.bash
 
+RUN echo «it works»
+
