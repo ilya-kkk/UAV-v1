@@ -4,7 +4,7 @@ RUN apt install locales
 RUN locale-gen en_US en_US.UTF-8
 RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 RUN export LANG=en_US.UTF-8
-RUN apt install software-properties-common
+RUN apt -y install software-properties-common
 RUN add-apt-repository universe
 RUN apt update && sudo apt install curl -y
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
