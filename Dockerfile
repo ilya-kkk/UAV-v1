@@ -1,19 +1,43 @@
-FROM ubuntu:22.04 as base
-RUN apt update 
-RUN apt install locales
-RUN locale-gen en_US en_US.UTF-8
-RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-RUN export LANG=en_US.UTF-8
-RUN apt -y install software-properties-common
-RUN add-apt-repository universe
-RUN apt update && apt install curl -y
-RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
-RUN apt update 
-RUN apt -y install ros-dev-tools
-RUN apt update && apt upgrade
-RUN apt -y install ros-iron-desktop
-RUN source /opt/ros/iron/setup.bash
+# Используем базовый образ Ubuntu 22.04
+FROM ubuntu:22.04
+
+# Обновляем пакеты и устанавливаем необходимые зависимости
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg2 \
+    lsb-release \
+    && rm -rf /var/lib/apt/lists/*
+
+# Добавляем ключ репозитория ROS 2
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+
+# Добавляем репозиторий ROS 2
+RUN sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
+
+# Обновляем список пакетов и устанавливаем ROS 2
+RUN apt-get update && apt-get install -y \
+    ros-foxy-desktop \
+    && rm -rf /var/lib/apt/lists/*
+
+# Инициализируем окружение ROS 2
+RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+
+# Устанавливаем пакеты MAVROS
+RUN apt-get update && apt-get install -y \
+    ros-foxy-mavros \
+    ros-foxy-mavros-msgs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Инициализируем окружение MAVROS
+RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+
+# Устанавливаем другие необходимые пакеты или выполняем другие настройки, если это необходимо
+
+# Опционально: копируем исходные файлы вашего приложения в образ Docker и устанавливаем их, если это необходимо
+# COPY ваш_приложение /путь_в_образе
+
+# Опционально: указываем команду по умолчанию, которая будет запущена при запуске контейнера
+# CMD [ "bash" ]
 
 RUN echo «it works»
 
