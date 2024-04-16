@@ -39,5 +39,5 @@ RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 # Опционально: указываем команду по умолчанию, которая будет запущена при запуске контейнера
 # CMD [ "bash" ]
 
-RUN echo «it works»
+RUN echo "it works"
 
