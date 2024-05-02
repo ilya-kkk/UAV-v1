@@ -15,9 +15,11 @@ RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt
 RUN sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
 
 # Обновляем список пакетов и устанавливаем ROS 2
-RUN apt-get update && apt-get install -y \
-    ros-foxy-desktop \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt update 
+RUN apt install 
+RUN rm -rf /var/lib/apt/lists/*
+RUN apt install -y ros-foxy-desktop 
+RUN rm -rf /var/lib/apt/lists/*
 
 # Инициализируем окружение ROS 2
 RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
