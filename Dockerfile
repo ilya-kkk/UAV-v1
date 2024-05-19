@@ -1,45 +1,30 @@
-# Используем базовый образ Ubuntu 22.04
-FROM ubuntu:22.04
+# This is an auto generated Dockerfile for ros:ros-base
+# generated from docker_images_ros2/create_ros_image.Dockerfile.em
+FROM ros:iron-ros-core-jammy
 
-# Обновляем пакеты и устанавливаем необходимые зависимости
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg2 \
-    lsb-release \
+# install bootstrap tools
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    build-essential \
+    git \
+    python3-colcon-common-extensions \
+    python3-colcon-mixin \
+    python3-rosdep \
+    python3-vcstool \
     && rm -rf /var/lib/apt/lists/*
 
-# Добавляем ключ репозитория ROS 2
-RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+# bootstrap rosdep
+RUN rosdep init && \
+  rosdep update --rosdistro $ROS_DISTRO
 
-# Добавляем репозиторий ROS 2
-RUN sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
+# setup colcon mixin and metadata
+RUN colcon mixin add default \
+      https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
+    colcon mixin update && \
+    colcon metadata add default \
+      https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
+    colcon metadata update
 
-# Обновляем список пакетов и устанавливаем ROS 2
-RUN apt update 
-RUN apt install 
-RUN rm -rf /var/lib/apt/lists/*
-RUN apt install -y ros-foxy-desktop 
-RUN rm -rf /var/lib/apt/lists/*
-
-# Инициализируем окружение ROS 2
-RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
-
-# Устанавливаем пакеты MAVROS
-RUN apt-get update && apt-get install -y \
-    ros-foxy-mavros \
-    ros-foxy-mavros-msgs \
+# install ros2 packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-iron-ros-base=0.10.0-3* \
     && rm -rf /var/lib/apt/lists/*
-
-# Инициализируем окружение MAVROS
-RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
-
-# Устанавливаем другие необходимые пакеты или выполняем другие настройки, если это необходимо
-
-# Опционально: копируем исходные файлы вашего приложения в образ Docker и устанавливаем их, если это необходимо
-# COPY ваш_приложение /путь_в_образе
-
-# Опционально: указываем команду по умолчанию, которая будет запущена при запуске контейнера
-# CMD [ "bash" ]
-
-RUN echo "it works"
-
